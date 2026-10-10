@@ -13,3 +13,7 @@ Static personal site: plain HTML pages sharing one `styles.css`. No build step, 
 - `blog.html` (feed) and `write.html` (Tumblr-style composer) share `blog.js`. Posts are stored in the browser's localStorage under `blog.posts`, so they are per-browser, not part of the repo.
 - All storage access goes through `Blog.loadPosts` / `Blog.savePosts`; post HTML is rendered via `Blog.renderPost`, which sanitizes the body. Don't write post content with `innerHTML`.
 - Links created in JS (e.g. tag filters) are not covered by `check-links.sh`.
+
+## Git
+
+- Never push without asking the user first.
