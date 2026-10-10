@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blog - Chris McCann</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="blog.html">Blog</a>
+  </nav>
+  <main>
+    <h1>Blog</h1>
+    <p class="blog-actions"><a href="write.html">Write a post</a></p>
+    <p id="filter" class="filter" hidden></p>
+    <div id="feed"></div>
+  </main>
+  <script src="blog.js"></script>
+  <script>
+    (function () {
+      var feed = document.getElementById('feed');
+      var filter = document.getElementById('filter');
+      var tag = new URLSearchParams(location.search).get('tag');
+
+      var posts = Blog.loadPosts().filter(function (p) { return Blog.isLive(p); });
+      if (tag) {
+        var wanted = tag.toLowerCase();
+        posts = posts.filter(function (p) {
+          return (p.tags || []).some(function (t) { return t.toLowerCase() === wanted; });
+        });
+        filter.hidden = false;
+        filter.appendChild(document.createTextNode('Showing posts tagged #' + tag + ' '));
+        var clear = Blog.el('a', null, '(show all)');
+        clear.href = 'blog.html';
+        filter.appendChild(clear);
+      }
+
+      posts.sort(function (a, b) {
+        return new Date(Blog.displayDate(b)) - new Date(Blog.displayDate(a));
+      });
+
+      if (!posts.length) {
+        var empty = Blog.el('p', 'empty', tag ? 'No posts with that tag.' : 'No posts yet. ');
+        if (!tag) {
+          var link = Blog.el('a', null, 'Write the first one.');
+          link.href = 'write.html';
+          empty.appendChild(link);
+        }
+        feed.appendChild(empty);
+        return;
+      }
+
+      posts.forEach(function (p) {
+        feed.appendChild(Blog.renderPost(p, {
+          tagHref: function (t) { return 'blog.html?tag=' + encodeURIComponent(t); }
+        }));
+      });
+    })();
+  </script>
+</body>
+</html>
